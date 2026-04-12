@@ -1,0 +1,1 @@
+Herramienta para analizar archivos .env y detectar configuraciones inseguras.
