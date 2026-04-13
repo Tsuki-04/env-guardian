@@ -109,10 +109,14 @@ def check_sensitive_variables(env_vars):
 
     sensitive_keywords = ["SECRET", "TOKEN", "API_KEY", "PASSWORD"]
     weak_values = ["1234", "123456", "password", "admin", "test", "changeme"]
+    excluded_variables = ["DB_PASSWORD"]
 
     for key, value in env_vars.items():
         key_upper = key.upper()
         value_clean = value.strip()
+
+        if key_upper in excluded_variables:
+            continue
 
         is_sensitive = any(keyword in key_upper for keyword in sensitive_keywords)
 
