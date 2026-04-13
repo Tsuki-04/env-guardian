@@ -103,3 +103,29 @@ def check_db_password(env_vars):
         )
 
     return results
+
+def check_sensitive_variables(env_vars):
+    results = []
+
+    sensitive_keywords = ["SECRET", "TOKEN", "API_KEY", "PASSWORD"]
+    weak_values = ["1234", "123456", "password", "admin", "test", "changeme"]
+
+    for key, value in env_vars.items():
+        key_upper = key.upper()
+        value_clean = value.strip()
+
+        is_sensitive = any(keyword in key_upper for keyword in sensitive_keywords)
+
+        if not is_sensitive:
+            continue
+
+        if value_clean == "":
+            results.append(f"[ERROR] Sensitive variable {key} is empty.")
+            continue
+
+        if value_clean.lower() in weak_values:
+            results.append(
+                f"[WARNING] Sensitive variable {key} uses a suspiciously weak value."
+            )
+
+    return results
