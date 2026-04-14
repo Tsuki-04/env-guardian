@@ -17,5 +17,34 @@ results.extend(check_db_password(env_vars))
 results.extend(check_sensitive_variables(env_vars))
 results.extend(compare_env_files(env_vars, example_vars))
 
+errors = []
+warnings = []
+info = []
+
 for result in results:
-    print(result)
+    if result.startswith("[ERROR]"):
+        errors.append(result)
+    elif result.startswith("[WARNING]"):
+        warnings.append(result)
+    elif result.startswith("[INFO]"):
+        info.append(result)
+
+if errors:
+    print("\n=== ERRORS ===")
+    for e in errors:
+        print(e)
+
+if warnings:
+    print("\n=== WARNINGS ===")
+    for w in warnings:
+        print(w)
+
+if info:
+    print("\n=== INFO ===")
+    for i in info:
+        print(i)
+
+print("\n=== SUMMARY ===")
+print(f"Errors: {len(errors)}")
+print(f"Warnings: {len(warnings)}")
+print(f"Info: {len(info)}")
