@@ -1,3 +1,23 @@
+import argparse
+
+parser = argparse.ArgumentParser(
+    description="Env Guardian - Analyze .env files and detect insecure configurations"
+)
+
+parser.add_argument(
+    "--env",
+    default=".env",
+    help="Path to the .env file to analyze"
+)
+
+parser.add_argument(
+    "--example",
+    default=".env.example",
+    help="Path to the .env.example file to compare against"
+)
+
+args = parser.parse_args()
+
 from src.analyzer import parse_env_file
 from rules.security import (
     check_app_debug,
@@ -7,8 +27,8 @@ from rules.security import (
 )
 from rules.structure import compare_env_files
 
-env_vars = parse_env_file(".env")
-example_vars = parse_env_file(".env.example")
+env_vars = parse_env_file(args.env)
+example_vars = parse_env_file(args.example)
 
 results = []
 results.extend(check_app_debug(env_vars))
