@@ -45,11 +45,11 @@ env_vars = parse_env_file(args.env)
 example_vars = parse_env_file(args.example)
 
 results = []
-results.extend(check_app_debug(env_vars))
+results.extend(check_app_debug(env_vars, strict_mode=args.prod_check))
 results.extend(check_app_key(env_vars))
-results.extend(check_db_password(env_vars))
+results.extend(check_db_password(env_vars, strict_mode=args.prod_check))
 results.extend(check_sensitive_variables(env_vars))
-results.extend(compare_env_files(env_vars, example_vars))
+results.extend(compare_env_files(env_vars, example_vars, strict_mode=args.prod_check))
 
 errors = []
 warnings = []
