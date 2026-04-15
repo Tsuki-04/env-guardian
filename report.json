@@ -1,22 +1,22 @@
 {
     "errors": [
-        "[ERROR] APP_KEY is missing."
+        "[ERROR] APP_DEBUG is enabled. Disable it for production.",
+        "[ERROR] APP_KEY is missing.",
+        "[ERROR] Missing variable in .env: ACCESS_TOKEN",
+        "[ERROR] Missing variable in .env: API_KEY",
+        "[ERROR] Missing variable in .env: APP_KEY",
+        "[ERROR] Missing variable in .env: JWT_SECRET",
+        "[ERROR] Missing variable in .env: MAIL_PASSWORD"
     ],
     "warnings": [
-        "[WARNING] APP_DEBUG is enabled. Disable it in production.",
-        "[WARNING] Missing variable in .env: ACCESS_TOKEN",
-        "[WARNING] Missing variable in .env: API_KEY",
-        "[WARNING] Missing variable in .env: APP_KEY",
-        "[WARNING] Missing variable in .env: JWT_SECRET",
-        "[WARNING] Missing variable in .env: MAIL_PASSWORD"
+        "[WARNING] DB_PASSWORD is medium. Use a stronger password for production."
     ],
     "info": [
-        "[INFO] DB_PASSWORD looks strong.",
         "[INFO] Undocumented variable in .env: EXTRA_CUSTOM_VAR"
     ],
     "summary": {
-        "errors": 1,
-        "warnings": 6,
-        "info": 2
+        "errors": 7,
+        "warnings": 1,
+        "info": 1
     }
 }

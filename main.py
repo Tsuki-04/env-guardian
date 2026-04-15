@@ -2,13 +2,8 @@ import argparse
 
 from src.analyzer import parse_env_file
 from src.exporter import export_results
-from rules.security import (
-    check_app_debug,
-    check_app_key,
-    check_db_password,
-    check_sensitive_variables,
-)
-from rules.structure import compare_env_files
+from src.formatter import group_results
+from src.runner import run_analysis
 
 
 parser = argparse.ArgumentParser(
@@ -40,28 +35,11 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-
 env_vars = parse_env_file(args.env)
 example_vars = parse_env_file(args.example)
 
-results = []
-results.extend(check_app_debug(env_vars, strict_mode=args.prod_check))
-results.extend(check_app_key(env_vars))
-results.extend(check_db_password(env_vars, strict_mode=args.prod_check))
-results.extend(check_sensitive_variables(env_vars))
-results.extend(compare_env_files(env_vars, example_vars, strict_mode=args.prod_check))
-
-errors = []
-warnings = []
-info = []
-
-for result in results:
-    if result.startswith("[ERROR]"):
-        errors.append(result)
-    elif result.startswith("[WARNING]"):
-        warnings.append(result)
-    elif result.startswith("[INFO]"):
-        info.append(result)
+results = run_analysis(env_vars, example_vars, strict_mode=args.prod_check)
+errors, warnings, info = group_results(results)
 
 if errors:
     print("\n=== ERRORS ===")
