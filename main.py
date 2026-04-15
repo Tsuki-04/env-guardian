@@ -32,6 +32,12 @@ parser.add_argument(
     help="Path to export the results (.txt or .json)"
 )
 
+parser.add_argument(
+    "--prod-check",
+    action="store_true",
+    help="Enable stricter checks for production-like environments"
+)
+
 args = parser.parse_args()
 
 

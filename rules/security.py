@@ -1,10 +1,13 @@
-def check_app_debug(env_vars):
+def check_app_debug(env_vars, strict_mode=False):
     results = []
 
     app_debug = env_vars.get("APP_DEBUG", "").strip().lower()
 
     if app_debug == "true":
-        results.append("[WARNING] APP_DEBUG is enabled. Disable it in production.")
+        if strict_mode:
+            results.append("[ERROR] APP_DEBUG is enabled. Disable it for production.")
+        else:
+            results.append("[WARNING] APP_DEBUG is enabled. Disable it in production.")
 
     return results
 
@@ -72,7 +75,7 @@ def evaluate_password_strength(password):
     }
 
 
-def check_db_password(env_vars):
+def check_db_password(env_vars, strict_mode=False):
     results = []
 
     if "DB_PASSWORD" not in env_vars:
@@ -89,18 +92,32 @@ def check_db_password(env_vars):
     level = password_analysis["level"]
     issues = password_analysis["issues"]
 
-    if level == "weak":
-        results.append(
-            "[WARNING] DB_PASSWORD is weak because " + ", ".join(issues) + "."
-        )
-    elif level == "medium":
-        results.append(
-            "[INFO] DB_PASSWORD is medium. Consider improving it."
-        )
-    elif level == "strong":
-        results.append(
-            "[INFO] DB_PASSWORD looks strong."
-        )
+    if strict_mode:
+        if level == "weak":
+            results.append(
+                "[ERROR] DB_PASSWORD is weak because " + ", ".join(issues) + "."
+            )
+        elif level == "medium":
+            results.append(
+                "[WARNING] DB_PASSWORD is medium. Use a stronger password for production."
+            )
+        elif level == "strong":
+            results.append(
+                "[INFO] DB_PASSWORD looks strong."
+            )
+    else:
+        if level == "weak":
+            results.append(
+                "[WARNING] DB_PASSWORD is weak because " + ", ".join(issues) + "."
+            )
+        elif level == "medium":
+            results.append(
+                "[INFO] DB_PASSWORD is medium. Consider improving it."
+            )
+        elif level == "strong":
+            results.append(
+                "[INFO] DB_PASSWORD looks strong."
+            )
 
     return results
 

@@ -1,4 +1,4 @@
-def compare_env_files(env_vars, example_vars):
+def compare_env_files(env_vars, example_vars, strict_mode=False):
     results = []
 
     env_keys = set(env_vars.keys())
@@ -8,7 +8,10 @@ def compare_env_files(env_vars, example_vars):
     extra_keys = env_keys - example_keys
 
     for key in sorted(missing_keys):
-        results.append(f"[WARNING] Missing variable in .env: {key}")
+        if strict_mode:
+            results.append(f"[ERROR] Missing variable in .env: {key}")
+        else:
+            results.append(f"[WARNING] Missing variable in .env: {key}")
 
     for key in sorted(extra_keys):
         results.append(f"[INFO] Undocumented variable in .env: {key}")
