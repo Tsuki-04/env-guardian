@@ -1,5 +1,16 @@
 import argparse
 
+from src.analyzer import parse_env_file
+from src.exporter import export_results
+from rules.security import (
+    check_app_debug,
+    check_app_key,
+    check_db_password,
+    check_sensitive_variables,
+)
+from rules.structure import compare_env_files
+
+
 parser = argparse.ArgumentParser(
     description="Env Guardian - Analyze .env files and detect insecure configurations"
 )
@@ -16,16 +27,13 @@ parser.add_argument(
     help="Path to the .env.example file to compare against"
 )
 
+parser.add_argument(
+    "--output",
+    help="Path to export the results (.txt or .json)"
+)
+
 args = parser.parse_args()
 
-from src.analyzer import parse_env_file
-from rules.security import (
-    check_app_debug,
-    check_app_key,
-    check_db_password,
-    check_sensitive_variables,
-)
-from rules.structure import compare_env_files
 
 env_vars = parse_env_file(args.env)
 example_vars = parse_env_file(args.example)
@@ -68,3 +76,7 @@ print("\n=== SUMMARY ===")
 print(f"Errors: {len(errors)}")
 print(f"Warnings: {len(warnings)}")
 print(f"Info: {len(info)}")
+
+if args.output:
+    export_results(args.output, errors, warnings, info)
+    print(f"\n[INFO] Results exported to {args.output}")

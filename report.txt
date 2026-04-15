@@ -1,0 +1,19 @@
+=== ERRORS ===
+[ERROR] APP_KEY is missing.
+
+=== WARNINGS ===
+[WARNING] APP_DEBUG is enabled. Disable it in production.
+[WARNING] Missing variable in .env: ACCESS_TOKEN
+[WARNING] Missing variable in .env: API_KEY
+[WARNING] Missing variable in .env: APP_KEY
+[WARNING] Missing variable in .env: JWT_SECRET
+[WARNING] Missing variable in .env: MAIL_PASSWORD
+
+=== INFO ===
+[INFO] DB_PASSWORD looks strong.
+[INFO] Undocumented variable in .env: EXTRA_CUSTOM_VAR
+
+=== SUMMARY ===
+Errors: 1
+Warnings: 6
+Info: 2
