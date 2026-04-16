@@ -1,10 +1,12 @@
 import argparse
 import sys
 
+from src import messages
 from src.analyzer import parse_env_file
 from src.exporter import export_results
 from src.formatter import group_results
 from src.runner import run_analysis
+
 
 
 parser = argparse.ArgumentParser(
@@ -39,14 +41,14 @@ args = parser.parse_args()
 try:
     env_vars = parse_env_file(args.env, required=True)
 except FileNotFoundError:
-    print(f"[ERROR] Required .env file not found: {args.env}")
+    print(messages.required_env_file_not_found(args.env))
     sys.exit(1)
 
 example_vars = parse_env_file(args.example, required=False)
 
 results = []
 if example_vars is None:
-    results.append(f"[INFO] Optional reference file not found: {args.example}. Structure comparison skipped.")
+    results.append(messages.optional_reference_not_found(args.example))
 
 results.extend(run_analysis(env_vars, example_vars, strict_mode=args.prod_check))
 
@@ -74,4 +76,4 @@ print(f"Info: {len(info)}")
 
 if args.output:
     export_results(args.output, errors, warnings, info)
-    print(f"\n[INFO] Results exported to {args.output}")
+    print(f"\n{messages.results_exported(args.output)}")

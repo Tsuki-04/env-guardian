@@ -1,13 +1,13 @@
+from src import messages
+
+
 def check_app_debug(env_vars, strict_mode=False):
     results = []
 
     app_debug = env_vars.get("APP_DEBUG", "").strip().lower()
 
     if app_debug == "true":
-        if strict_mode:
-            results.append("[ERROR] APP_DEBUG is enabled. Disable it for production.")
-        else:
-            results.append("[WARNING] APP_DEBUG is enabled. Disable it in production.")
+        results.append(messages.app_debug_enabled(strict_mode=strict_mode))
 
     return results
 
@@ -16,13 +16,13 @@ def check_app_key(env_vars):
     results = []
 
     if "APP_KEY" not in env_vars:
-        results.append("[ERROR] APP_KEY is missing.")
+        results.append(messages.app_key_missing())
         return results
 
     app_key = env_vars.get("APP_KEY", "").strip()
 
     if app_key == "":
-        results.append("[ERROR] APP_KEY is empty.")
+        results.append(messages.app_key_empty())
 
     return results
 
@@ -79,47 +79,28 @@ def check_db_password(env_vars, strict_mode=False):
     results = []
 
     if "DB_PASSWORD" not in env_vars:
-        results.append("[ERROR] DB_PASSWORD is missing.")
+        results.append(messages.db_password_missing())
         return results
 
     db_password = env_vars.get("DB_PASSWORD", "").strip()
 
     if db_password == "":
-        results.append("[ERROR] DB_PASSWORD is empty.")
+        results.append(messages.db_password_empty())
         return results
 
     password_analysis = evaluate_password_strength(db_password)
     level = password_analysis["level"]
     issues = password_analysis["issues"]
 
-    if strict_mode:
-        if level == "weak":
-            results.append(
-                "[ERROR] DB_PASSWORD is weak because " + ", ".join(issues) + "."
-            )
-        elif level == "medium":
-            results.append(
-                "[WARNING] DB_PASSWORD is medium. Use a stronger password for production."
-            )
-        elif level == "strong":
-            results.append(
-                "[INFO] DB_PASSWORD looks strong."
-            )
-    else:
-        if level == "weak":
-            results.append(
-                "[WARNING] DB_PASSWORD is weak because " + ", ".join(issues) + "."
-            )
-        elif level == "medium":
-            results.append(
-                "[INFO] DB_PASSWORD is medium. Consider improving it."
-            )
-        elif level == "strong":
-            results.append(
-                "[INFO] DB_PASSWORD looks strong."
-            )
+    if level == "weak":
+        results.append(messages.db_password_weak(issues, strict_mode=strict_mode))
+    elif level == "medium":
+        results.append(messages.db_password_medium(strict_mode=strict_mode))
+    elif level == "strong":
+        results.append(messages.db_password_strong())
 
     return results
+
 
 def check_sensitive_variables(env_vars):
     results = []
@@ -141,12 +122,10 @@ def check_sensitive_variables(env_vars):
             continue
 
         if value_clean == "":
-            results.append(f"[ERROR] Sensitive variable {key} is empty.")
+            results.append(messages.sensitive_variable_empty(key))
             continue
 
         if value_clean.lower() in weak_values:
-            results.append(
-                f"[WARNING] Sensitive variable {key} uses a suspiciously weak value."
-            )
+            results.append(messages.sensitive_variable_weak(key))
 
     return results
