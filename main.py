@@ -4,9 +4,8 @@ import sys
 from src import messages
 from src.analyzer import parse_env_file
 from src.exporter import export_results
-from src.formatter import group_results
+from src.formatter import group_results, render_console_output
 from src.runner import run_analysis
-
 
 
 parser = argparse.ArgumentParser(
@@ -54,25 +53,14 @@ results.extend(run_analysis(env_vars, example_vars, strict_mode=args.prod_check)
 
 errors, warnings, info = group_results(results)
 
-if errors:
-    print("\n=== ERRORS ===")
-    for e in errors:
-        print(e)
-
-if warnings:
-    print("\n=== WARNINGS ===")
-    for w in warnings:
-        print(w)
-
-if info:
-    print("\n=== INFO ===")
-    for i in info:
-        print(i)
-
-print("\n=== SUMMARY ===")
-print(f"Errors: {len(errors)}")
-print(f"Warnings: {len(warnings)}")
-print(f"Info: {len(info)}")
+render_console_output(
+    errors,
+    warnings,
+    info,
+    env_path=args.env,
+    example_path=args.example if example_vars is not None else None,
+    strict_mode=args.prod_check
+)
 
 if args.output:
     export_results(args.output, errors, warnings, info)
