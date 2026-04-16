@@ -1,4 +1,5 @@
 import argparse
+import sys
 
 from src.analyzer import parse_env_file
 from src.exporter import export_results
@@ -35,10 +36,20 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-env_vars = parse_env_file(args.env)
-example_vars = parse_env_file(args.example)
+try:
+    env_vars = parse_env_file(args.env, required=True)
+except FileNotFoundError:
+    print(f"[ERROR] Required .env file not found: {args.env}")
+    sys.exit(1)
 
-results = run_analysis(env_vars, example_vars, strict_mode=args.prod_check)
+example_vars = parse_env_file(args.example, required=False)
+
+results = []
+if example_vars is None:
+    results.append(f"[INFO] Optional reference file not found: {args.example}. Structure comparison skipped.")
+
+results.extend(run_analysis(env_vars, example_vars, strict_mode=args.prod_check))
+
 errors, warnings, info = group_results(results)
 
 if errors:
